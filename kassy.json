@@ -1,0 +1,9 @@
+{
+	"name": "aoi",
+	"version": 0.1,
+	"startup": "aoi.js",
+    "priority": "last",
+	"help": [
+		["{{commandPrefix}}aoi help", "aoi help", "aoi help extended"]
+	]
+}
