@@ -8,9 +8,21 @@ exports.load = platform => {
         //'unregister': require('./src/commands/unregister.js')(users),
         'help': require('./src/commands/help.js')()
     };
+
+    for (let opt in opts) {
+        if (opt.load) {
+            opt.load();
+        }
+    }
 };
 
 exports.unload = () => {
+    // Unload each submodule
+    for (let opt in opts) {
+        if (opt.unload) {
+            opt.unload();
+        }
+    }
     users = null;
 };
 

@@ -3,11 +3,8 @@ const encouragingMessages = ['If know one has told you yet today, you deserve en
     minHourBoundry = 9,
     maxHourBoundry = 17;
 
-let userList = null,
-    api = null,
 
-
-getRandomInt = (min, max) => {
+let getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
@@ -38,7 +35,7 @@ calculateDelay = (forceNextDay) => {
             minHour = minHourBoundry;
         }
     }
-    // Select a random hour between the current / minimum and maximum
+    // Select a random hour and minute between the current / minimum and maximum
     let hour = getRandomInt(minHour, maxHour),
         minute = getRandomInt(minMinute, 60);
 
@@ -46,6 +43,8 @@ calculateDelay = (forceNextDay) => {
     now.hour(hour);
     now.minute(minute);
 
+    // If the next encouraging meessage should be tomorrow, because either the message for today has already been sent
+    // or we want to force tomorrow, from the previous timeout.
     if (isTomorrow || forceNextDay) {
         now.add(1, 'days');
     }
@@ -72,46 +71,54 @@ module.exports = users => {
         run: (args, api, event) => {
             let message = '',
                 name = null,
-                userId = null;
+                userId = null,
+                userList = api.getUsers();
 
             if (args.length === 0) {
                 userId = event.sender_id;
                 name = event.sender_name;
             }
             else if (args.length === 1) {
-                userText = args[0];
-                if (userList === null) {
-                    userList = api.getUsers();
-                    // Should store list with dual keys, as the userid and the username for easy look up in the future
-                    // currently the module does not make use of the users object, but in future this should store all information about a user.
-                    let found = false;
-                    for (key in users.keys()) {
-                        // not explicit checking
-                        if (users[key].name.toLowerCase() == args[0].toLowerCase()) {
-                            userId = key;
-                            found = true;
-                        }
+                let userText = args[0];
+
+                //It is expected for compound names, like "John Snow" to be surrounded by double quotes,
+                //this is because otherwise the platform would thing the name is two separate arguments instead of one.
+                if (userText.charAt(0) === '"' && userText.userText(userText.length - 1) === '"') {
+                    userText = userText.substr(1, userText.length - 2);
+                }
+
+                //FIXME Should store list with dual keys, as the userid and the username for easy look up in the future
+                // currently the module does not make use of the users object, but in future this should store all information about a user.
+                let found = false;
+                for (key in users) {
+                    // Depending on the implementation of the getUsers method of the source intergration then the userText could either reference the id or the name of the user
+                    // assumes that the userText is unqiue.
+                    if (key == userText || users[key].name.toLowerCase() == userText) {
+                        userId = key;
+                        found = true;
+                        break;
                     }
-                    if (!found) {
-                        return api.sendMessage($$`user not found ${0}`, event.thread_id);
-                    }
+                }
+                // TODO if the user was not found then should we save the user anyway?
+                if (!found) {
+                    return api.sendMessage($$`user not found ${userText}`, event.thread_id);
                 }
 
             }
             else {
                 return api.sendMessage($$`register takes at most one arg`, event.thread_id);
             }
-            // add more encourging messages and randomly select them
+
             if (userList && userList[userId]) {
                 name = userList[userId].name;
             }
 
-            //FIXME add translation
+            // FIXME add more encourging messages and randomly select them
             message += name + ', ' + encouragingMessages[0];
             api.sendMessage($$`${name}, recieve encouraging message between ${minHourBoundry}:00 and ${maxHourBoundry}:00`, event.thread_id);
             queueMessage(message, api, event);
         },
-        command: 'register [<user>]',
+        command: 'register ["<user>"]',
         help: $$`register help`
     };
 };
