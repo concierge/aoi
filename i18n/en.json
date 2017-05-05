@@ -1,0 +1,8 @@
+{
+    "user not found ${0}":"User with name \"${0}\", was not found, sorry 😔",
+    "register takes at most one arg": "Register only takes at most one argument",
+    "${0}, recieve encouraging message between ${1}:00 and ${2}:00" : "${0}, you are setup to recieve an encouraging message once a day between the hours of ${1}:00 and ${2}:00 😘",
+    "register help": "Register a user to recieve an encourging message once a day, if no user is provided the user that sent the register request will be used",
+    "help for one command": "You can only show detailed help for one command at a time.",
+    "no help for command": "No such command to show help for."
+}

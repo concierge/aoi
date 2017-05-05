@@ -2,13 +2,13 @@ module.exports = () => {
     return {
         run: function(args, api, event, opts) {
             if (args.length > 1) {
-                api.sendMessage($$`You can only show detailed help for one command at a time.`, event.thread_id);
+                api.sendMessage($$`help for one command`, event.thread_id);
                 return;
             }
             let msg;
             if (args.length === 1) {
                 if (!opts[args[0]] || args[0] === 'help') {
-                    api.sendMessage($$`No such command to show help for.`, event.thread_id);
+                    api.sendMessage($$`no help for command`, event.thread_id);
                     return;
                 }
                 msg = `${opts[args[0]].command}\n--------------------\n${opts[args[0]].detailedHelp}`;

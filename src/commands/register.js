@@ -93,13 +93,13 @@ module.exports = users => {
                         }
                     }
                     if (!found) {
-                        return api.sendMessage($$`User with name {{name}}, was not found, sorry :(`, event.thread_id);
+                        return api.sendMessage($$`user not found ${0}`, event.thread_id);
                     }
                 }
 
             }
             else {
-                return api.sendMessage($$`Register only takes one argument`, event.thread_id);
+                return api.sendMessage($$`register takes at most one arg`, event.thread_id);
             }
             // add more encourging messages and randomly select them
             if (userList && userList[userId]) {
@@ -108,10 +108,10 @@ module.exports = users => {
 
             //FIXME add translation
             message += name + ', ' + encouragingMessages[0];
+            api.sendMessage($$`${name}, recieve encouraging message between ${minHourBoundry}:00 and ${maxHourBoundry}:00`, event.thread_id);
             queueMessage(message, api, event);
         },
-        command: 'register <user>',
-        help: $$`Registers a user to recieve encouragement`,
-        detailedHelp: $$`Registers a user to recieve encouragement.`
+        command: 'register [<user>]',
+        help: $$`register help`
     };
 };
