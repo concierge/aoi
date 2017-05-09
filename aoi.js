@@ -42,6 +42,4 @@ exports.run = (api, event) => {
     }
 
     // send through to some intelligent module later
-
-    return true;
 };

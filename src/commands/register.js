@@ -72,7 +72,7 @@ module.exports = users => {
             let message = '',
                 name = null,
                 userId = null,
-                userList = api.getUsers();
+                userList = api.getUsers(event.thread_id);
 
             if (args.length === 0) {
                 userId = event.sender_id;
@@ -90,10 +90,10 @@ module.exports = users => {
                 //FIXME Should store list with dual keys, as the userid and the username for easy look up in the future
                 // currently the module does not make use of the users object, but in future this should store all information about a user.
                 let found = false;
-                for (key in users) {
+                for (let key in userList) {
                     // Depending on the implementation of the getUsers method of the source intergration then the userText could either reference the id or the name of the user
                     // assumes that the userText is unqiue.
-                    if (key == userText || users[key].name.toLowerCase() == userText) {
+                    if (key === userText || userList[key].name.toLowerCase() === userText.toLowerCase()) {
                         userId = key;
                         found = true;
                         break;
